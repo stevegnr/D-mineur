@@ -14,8 +14,8 @@ function App() {
         HeightContext: { height, setHeight },
         BombsContext: { bombs, setBombs },
       }}>
-      <Menu />
       <GameZone />
+      <Menu />
     </DmineurContext.Provider>
   );
 }

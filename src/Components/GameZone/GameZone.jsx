@@ -14,21 +14,17 @@ function GameZone() {
 
   let min = 1;
   let max = qtyCells;
-  let acc = 0;
-  let bombsToBePlaced = bombs;
-  let bomb = "";
+  let bombsToBePlaced = +bombs;
+  let bomb = false;
 
-  for (let i = 0; i < width; i++) {
+  for (let i = 0; i < height; i++) {
     const cells = [];
-    for (let j = 0; j < height; j++) {
-      let chanceOfBomb = (bombsToBePlaced / max) * 100;
+    for (let j = 0; j < width; j++) {
       let alea = Math.floor(Math.random() * (max - min + 1)) + min;
-      console.log({ chanceOfBomb: chanceOfBomb, alea: alea });
-      if (alea <= chanceOfBomb) {
-        acc++;
+
+      if (alea <= bombsToBePlaced) {
         bombsToBePlaced--;
-        console.log("Bomb !", acc);
-        bomb += "💣";
+        bomb = true;
       }
       max--;
       cells.push(
@@ -40,10 +36,10 @@ function GameZone() {
           qtyCells={qtyCells}
         />
       );
+      bomb = false;
     }
     rows.push(<Row key={`row-${i}`}>{cells}</Row>);
   }
-  console.log(rows);
   return <Grid>{rows}</Grid>;
 }
 

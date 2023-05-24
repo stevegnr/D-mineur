@@ -3,8 +3,8 @@ import { DmineurContext } from "../../Context/Context";
 
 function Menu() {
   const context = useContext(DmineurContext);
-  const {setWidth} = context.WidthContext;
-  const {setHeight} = context.HeightContext;
+  const {width, setWidth} = context.WidthContext;
+  const {height, setHeight} = context.HeightContext;
   const {setBombs} = context.BombsContext;
 
   return (
@@ -14,7 +14,7 @@ function Menu() {
         type="number"
         name="width"
         id="width"
-        min={10}
+        min={5}
         max={200}
         placeholder="Cases en largeur"
         onChange={(e) => setWidth(e.target.value)}
@@ -25,7 +25,7 @@ function Menu() {
         type="number"
         name="height"
         id="height"
-        min={10}
+        min={5}
         max={200}
         placeholder="Cases en hauteur"
         onChange={(e) => setHeight(e.target.value)}
@@ -36,8 +36,8 @@ function Menu() {
         type="number"
         name="bombs"
         id="bombs"
-        min={10}
-        max={20000}
+        min={5}
+        max={width * height}
         placeholder="Bombes"
         onChange={(e) => setBombs(e.target.value)}
         defaultValue={10}
