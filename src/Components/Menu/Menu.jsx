@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { DmineurContext } from "../../Context/Context";
+import { styled } from "styled-components";
 
 function Menu() {
   const context = useContext(DmineurContext);
@@ -8,7 +9,7 @@ function Menu() {
   const {setBombs} = context.BombsContext;
 
   return (
-    <div>
+    <StyledMenu>
       <label htmlFor="width">Cases en largeur : </label>
       <input
         type="number"
@@ -42,8 +43,12 @@ function Menu() {
         onChange={(e) => setBombs(e.target.value)}
         defaultValue={10}
       />
-    </div>
+    </StyledMenu>
   );
 }
 
 export default Menu;
+
+const StyledMenu = styled.div`
+  font-family: "VT323", monospace;
+`;

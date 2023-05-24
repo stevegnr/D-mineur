@@ -2,6 +2,8 @@ import GameZone from "./GameZone/GameZone";
 import Menu from "./Menu/Menu";
 import { DmineurContext } from "../Context/Context";
 import { useState } from "react";
+import Header from "./Header/Header";
+import { styled } from "styled-components";
 
 function App() {
   const [width, setWidth] = useState(10);
@@ -14,10 +16,21 @@ function App() {
         HeightContext: { height, setHeight },
         BombsContext: { bombs, setBombs },
       }}>
-      <GameZone />
-      <Menu />
+      <Wrapper>
+        <Header />
+        <GameZone />
+        <Menu />
+      </Wrapper>
     </DmineurContext.Provider>
   );
 }
 
 export default App;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+`;
