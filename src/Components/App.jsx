@@ -18,7 +18,7 @@ function App() {
       }}>
       <Wrapper>
         <Header />
-        <GameZone />
+        <GameZone width={width} height={height} />
         <Menu />
       </Wrapper>
     </DmineurContext.Provider>

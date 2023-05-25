@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 
 function Header() {
   return (
-    <Banner>D💣mineur</Banner>
+    <Banner>💣Démineur</Banner>
   )
 }
 
