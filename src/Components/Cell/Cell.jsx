@@ -9,7 +9,6 @@ function Cell({ x, y, bomb, cells }) {
   const context = useContext(DmineurContext);
 
   const { openAll, setOpenAll } = context.OpenAllContext;
-  
   useEffect(() => {
     if (openAll) {
       setOpened(true);
@@ -17,7 +16,6 @@ function Cell({ x, y, bomb, cells }) {
   }, [openAll]);
 
   function opening() {
-    console.log(bomb);
     if (bomb === true) {
       setBombIcon("💥");
       setOpenAll(true);
@@ -54,6 +52,7 @@ function Cell({ x, y, bomb, cells }) {
       onClick={() => opening()}
       opened={opened}>
       {opened ? (bomb ? bombIcon : bombs) : ""}
+      {/* {bomb ? bombIcon : bombs} */}
     </CellComponent>
   );
 }
