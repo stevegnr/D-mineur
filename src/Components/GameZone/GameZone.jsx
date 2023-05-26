@@ -9,10 +9,13 @@ function GameZone({ height, width }) {
 
   const { bombs } = context.BombsContext;
   const { gameLaunch, setGameLaunch } = context.GameLaunchContext;
+  const { setOpenAll } = context.OpenAllContext;
   const { closeAll, setCloseAll } = context.CloseAllContext;
+
 
   const [cells, setCells] = useState([]);
   useEffect(() => {
+    setOpenAll(false)
     setCloseAll(true);
     setCloseAll(!closeAll);
     if (gameLaunch) {
