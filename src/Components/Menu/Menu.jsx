@@ -1,12 +1,14 @@
+/* eslint-disable react/prop-types */
 import { useContext } from "react";
 import { DmineurContext } from "../../Context/Context";
 import { styled } from "styled-components";
 
 function Menu() {
   const context = useContext(DmineurContext);
-  const {width, setWidth} = context.WidthContext;
-  const {height, setHeight} = context.HeightContext;
-  const {setBombs} = context.BombsContext;
+  const { width, setWidth } = context.WidthContext;
+  const { height, setHeight } = context.HeightContext;
+  const { setBombs } = context.BombsContext;
+  const { setGameLaunch } = context.GameLaunchContext;
 
   return (
     <StyledMenu>
@@ -43,6 +45,7 @@ function Menu() {
         onChange={(e) => setBombs(e.target.value)}
         defaultValue={10}
       />
+      <button onClick={() => setGameLaunch(true)}>Go !</button>
     </StyledMenu>
   );
 }

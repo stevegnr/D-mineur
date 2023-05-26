@@ -9,16 +9,26 @@ function App() {
   const [width, setWidth] = useState(10);
   const [height, setHeight] = useState(10);
   const [bombs, setBombs] = useState(10);
+  const [adjacentCells, setAdjacentCells] = useState([]);
+  const [gameLaunch, setGameLaunch] = useState(false);
+  const [openAll, setOpenAll] = useState(false);
+
   return (
     <DmineurContext.Provider
       value={{
         WidthContext: { width, setWidth },
         HeightContext: { height, setHeight },
         BombsContext: { bombs, setBombs },
+        AdjacentCellsContext: { adjacentCells, setAdjacentCells },
+        GameLaunchContext: {gameLaunch, setGameLaunch},
+        OpenAllContext: { openAll, setOpenAll },
       }}>
       <Wrapper>
         <Header />
-        <GameZone width={width} height={height} />
+        <GameZone
+          width={width}
+          height={height}
+        />
         <Menu />
       </Wrapper>
     </DmineurContext.Provider>
