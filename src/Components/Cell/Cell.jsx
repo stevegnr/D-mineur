@@ -7,6 +7,7 @@ function Cell({ x, y, bomb, cells }) {
   const [opened, setOpened] = useState(false);
   const [bombIcon, setBombIcon] = useState("💣");
   const context = useContext(DmineurContext);
+  const [emptyCells, setEmptyCells] = useState([]);
 
   const { openAll, setOpenAll } = context.OpenAllContext;
   const { closeAll } = context.CloseAllContext;
@@ -23,14 +24,6 @@ function Cell({ x, y, bomb, cells }) {
     }
   }, [openAll]);
 
-  function opening() {
-    if (bomb === true) {
-      setBombIcon("💥");
-      setOpenAll(true);
-    }
-    setOpened(true);
-  }
-
   let bombs = 0;
   const adjacentCells = [
     { x: x - 1, y: y, position: "gauche" }, // Gauche
@@ -42,6 +35,7 @@ function Cell({ x, y, bomb, cells }) {
     { x: x + 1, y: y - 1, position: "haut droite" }, // Diagonale supérieure droite
     { x: x + 1, y: y + 1, position: "bas droite" }, // Diagonale inférieure droite
   ];
+
   cells.forEach((element) => {
     let xelem = element.props.x;
     let yelem = element.props.y;
@@ -53,14 +47,32 @@ function Cell({ x, y, bomb, cells }) {
         }
       }
     });
+    if (bombs === 0) {
+      console.log("Case vide", { x: x, y: y });
+      if (!emptyCells.includes(element)) {
+        setEmptyCells([...emptyCells, { xelem, yelem }]);
+      }
+    }
   });
+
+  function opening() {
+    if (bomb === true) {
+      setBombIcon("💥");
+      setOpenAll(true);
+    } else if (bombs === 0) {
+      console.log("Ouvrir les cases vides adjacentes");
+      console.log({ x: x, y: y, bomb: bomb });
+    }
+    setOpened(true);
+  }
+  console.log(emptyCells);
   return (
     <CellComponent
       bombs={bombs}
       onClick={() => opening()}
       opened={opened}>
-      {opened ? (bomb ? bombIcon : bombs) : ""}
-      {/* {bomb ? bombIcon : bombs} */}
+      {/* {opened ? (bomb ? bombIcon : bombs) : ""} */}
+      {bomb ? bombIcon : bombs}
     </CellComponent>
   );
 }
