@@ -12,6 +12,7 @@ function App() {
   const [adjacentCells, setAdjacentCells] = useState([]);
   const [gameLaunch, setGameLaunch] = useState(false);
   const [openAll, setOpenAll] = useState(false);
+  const [closeAll, setCloseAll] = useState(false);
 
   return (
     <DmineurContext.Provider
@@ -20,8 +21,9 @@ function App() {
         HeightContext: { height, setHeight },
         BombsContext: { bombs, setBombs },
         AdjacentCellsContext: { adjacentCells, setAdjacentCells },
-        GameLaunchContext: {gameLaunch, setGameLaunch},
+        GameLaunchContext: { gameLaunch, setGameLaunch },
         OpenAllContext: { openAll, setOpenAll },
+        CloseAllContext: { closeAll, setCloseAll },
       }}>
       <Wrapper>
         <Header />

@@ -9,6 +9,14 @@ function Cell({ x, y, bomb, cells }) {
   const context = useContext(DmineurContext);
 
   const { openAll, setOpenAll } = context.OpenAllContext;
+  const { closeAll } = context.CloseAllContext;
+
+  useEffect(() => {
+    if (closeAll) {
+      setOpened(false);
+    }
+  }, [closeAll]);
+
   useEffect(() => {
     if (openAll) {
       setOpened(true);
