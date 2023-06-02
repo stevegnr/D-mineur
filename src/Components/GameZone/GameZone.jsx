@@ -46,6 +46,8 @@ function GameZone({ height, width }) {
         generatedCells.push(
           <Cell
             key={`cell-${x}-${y}`}
+            x={x}
+            y={y}
             bomb={bomb}
             bombsAdj={bombsAdj}
             cellulesVides={cellulesVides}

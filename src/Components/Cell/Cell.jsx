@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { DmineurContext } from "../../Context/Context";
 
-function Cell({ bomb, bombsAdj, }) {
+function Cell({ x, y, bomb, bombsAdj }) {
   const [opened, setOpened] = useState(false);
   const [bombIcon, setBombIcon] = useState("💣");
   const context = useContext(DmineurContext);
