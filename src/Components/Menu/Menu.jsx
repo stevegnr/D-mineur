@@ -54,4 +54,6 @@ export default Menu;
 
 const StyledMenu = styled.div`
   font-family: "VT323", monospace;
+  display: flex;
+  gap: 10px;
 `;

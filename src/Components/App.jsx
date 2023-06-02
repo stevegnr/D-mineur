@@ -13,7 +13,7 @@ function App() {
   const [gameLaunch, setGameLaunch] = useState(false);
   const [openAll, setOpenAll] = useState(false);
   const [closeAll, setCloseAll] = useState(false);
-  const [emptyCells, setEmptyCells] = useState([])
+  const [openEmpty, setOpenEmpty] = useState({});
 
   return (
     <DmineurContext.Provider
@@ -25,7 +25,7 @@ function App() {
         GameLaunchContext: { gameLaunch, setGameLaunch },
         OpenAllContext: { openAll, setOpenAll },
         CloseAllContext: { closeAll, setCloseAll },
-        EmptyCellsContext: {emptyCells, setEmptyCells}
+        OpenEmptyContext: { openEmpty, setOpenEmpty },
       }}>
       <Wrapper>
         <Header />

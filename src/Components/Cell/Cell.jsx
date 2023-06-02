@@ -1,16 +1,28 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { useContext, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { DmineurContext } from "../../Context/Context";
 
-function Cell({ x, y, bomb, bombsAdj }) {
+function Cell({ x, y, bomb, bombsAdj, cellulesVides }) {
   const [opened, setOpened] = useState(false);
   const [bombIcon, setBombIcon] = useState("💣");
   const context = useContext(DmineurContext);
 
   const { openAll, setOpenAll } = context.OpenAllContext;
   const { closeAll } = context.CloseAllContext;
-  const { emptyCells } = context.EmptyCellsContext;
+  const { openEmpty, setOpenEmpty } = context.OpenEmptyContext;
+  console.log(openEmpty);
+
+  const adjacentEmptyCells = cellulesVides.filter(
+    (emptyCell) =>
+      emptyCell.xelement - x <= 1 &&
+      emptyCell.xelement - x >= -1 &&
+      emptyCell.yelement - y <= 1 &&
+      emptyCell.yelement - y >= -1
+  );
+
+  console.log(adjacentEmptyCells)
 
   useEffect(() => {
     if (closeAll) {
@@ -24,13 +36,24 @@ function Cell({ x, y, bomb, bombsAdj }) {
     }
   }, [openAll]);
 
+  useEffect(() => {
+    if (
+      openEmpty &&
+      bombsAdj === 0 &&
+      adjacentEmptyCells.some(
+        (elem) => elem.xelement === x && elem.yelement === y
+      )
+    ) {
+      console.log("got this far");
+    }
+  }, [openEmpty]);
+
   function opening() {
     if (bomb === true) {
       setBombIcon("💥");
       setOpenAll(true);
     } else if (bombsAdj === 0) {
-      console.log("Ouvrir les cases vides adjacentes");
-      console.log({ emptyCells: emptyCells });
+      setOpenEmpty({ x, y });
     }
     setOpened(true);
   }

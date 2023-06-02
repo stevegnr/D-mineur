@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { cloneElement, useContext, useEffect, useState } from "react";
 import { DmineurContext } from "../../Context/Context";
@@ -11,14 +12,14 @@ function GameZone({ height, width }) {
   const { gameLaunch, setGameLaunch } = context.GameLaunchContext;
   const { setOpenAll } = context.OpenAllContext;
   const { closeAll, setCloseAll } = context.CloseAllContext;
-  const { setEmptyCells } = context.EmptyCellsContext;
+  const { setOpenEmpty } = context.OpenEmptyContext;
 
   const [cells, setCells] = useState([]);
   let bombsAdj = 0;
 
   useEffect(() => {
-    setEmptyCells([]);
-    let cellulesVides = []
+    setOpenEmpty({})
+    let cellulesVides = [];
     setOpenAll(false);
     setCloseAll(true);
     setCloseAll(!closeAll);
@@ -59,6 +60,7 @@ function GameZone({ height, width }) {
       generatedCells.forEach((element, index) => {
         const xelement = element.props.x;
         const yelement = element.props.y;
+        const bombelement = element.props.bomb;
         let bombsAdjacent = 0;
 
         const adjacentCells = [
@@ -84,15 +86,15 @@ function GameZone({ height, width }) {
           }
         });
 
-        if (bombsAdjacent === 0) {
+        if (bombsAdjacent === 0 && !bombelement) {
           // setEmptyCells([...emptyCells, `${xelement}-${yelement}`]);
           // console.log(emptyCells);
-          cellulesVides.push({xelement: xelement, yelement: yelement});
-          console.log(cellulesVides)
+          cellulesVides.push({ xelement: xelement, yelement: yelement });
         }
 
         const cellWithAdjBombs = cloneElement(element, {
-          bombsAdj: bombsAdjacent, cellulesVides: cellulesVides
+          bombsAdj: bombsAdjacent,
+          cellulesVides: cellulesVides,
         });
         generatedCells[index] = cellWithAdjBombs;
       });
