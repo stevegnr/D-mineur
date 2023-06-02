@@ -3,14 +3,14 @@ import { useContext, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { DmineurContext } from "../../Context/Context";
 
-function Cell({ x, y, bomb, cells }) {
+function Cell({ bomb, bombsAdj, }) {
   const [opened, setOpened] = useState(false);
   const [bombIcon, setBombIcon] = useState("💣");
   const context = useContext(DmineurContext);
 
   const { openAll, setOpenAll } = context.OpenAllContext;
   const { closeAll } = context.CloseAllContext;
-  const {emptyCells, setEmptyCells} = context.EmptyCellsContext
+  const { emptyCells } = context.EmptyCellsContext;
 
   useEffect(() => {
     if (closeAll) {
@@ -24,55 +24,23 @@ function Cell({ x, y, bomb, cells }) {
     }
   }, [openAll]);
 
-  let bombs = 0;
-
-  const adjacentCells = [
-    { x: x - 1, y: y, position: "gauche" }, // Gauche
-    { x: x + 1, y: y, position: "droite" }, // Droite
-    { x: x, y: y - 1, position: "haut" }, // Haut
-    { x: x, y: y + 1, position: "bas" }, // Bas
-    { x: x - 1, y: y - 1, position: "haut gauche" }, // Diagonale supérieure gauche
-    { x: x - 1, y: y + 1, position: "bas gauche" }, // Diagonale inférieure gauche
-    { x: x + 1, y: y - 1, position: "haut droite" }, // Diagonale supérieure droite
-    { x: x + 1, y: y + 1, position: "bas droite" }, // Diagonale inférieure droite
-  ];
-
-  cells.forEach((element) => {
-    let xelem = element.props.x;
-    let yelem = element.props.y;
-    let bombelem = element.props.bomb;
-    adjacentCells.forEach((el) => {
-      if (xelem === el.x && yelem === el.y) {
-        if (bombelem) {
-          bombs++;
-        }
-      }
-    });
-    if (bombs === 0  ) {
-      if (!emptyCells.includes(`${x}-${y}`)) {
-        setEmptyCells([...emptyCells, `${x}-${y}`]);
-      }
-    }
-  });
-
   function opening() {
     if (bomb === true) {
       setBombIcon("💥");
       setOpenAll(true);
-    } else if (bombs === 0) {
+    } else if (bombsAdj === 0) {
       console.log("Ouvrir les cases vides adjacentes");
-      console.log({ x: x, y: y, bomb: bomb });
-      console.log({ emptyCells});
+      console.log({ emptyCells: emptyCells });
     }
     setOpened(true);
   }
   return (
     <CellComponent
-      bombs={bombs}
+      bombsAdj={bombsAdj}
       onClick={() => opening()}
       opened={opened}>
       {/* {opened ? (bomb ? bombIcon : bombs) : ""} */}
-      {bomb ? bombIcon : bombs}
+      {bomb ? bombIcon : bombsAdj}
     </CellComponent>
   );
 }
@@ -91,7 +59,7 @@ const CellComponent = styled.div`
   font-size: large;
   font-weight: bold;
   color: ${(props) => {
-    switch (props.bombs) {
+    switch (props.bombsAdj) {
       case 0:
         return "lightgray";
 
