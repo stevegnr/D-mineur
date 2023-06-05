@@ -1,72 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useContext, useEffect, useState } from "react";
 import { styled } from "styled-components";
-import { DmineurContext } from "../../Context/Context";
 
-function Cell({ x, y, bomb, bombsAdj, cellulesVides }) {
-  const [opened, setOpened] = useState(false);
-  const [bombIcon, setBombIcon] = useState("💣");
-  const context = useContext(DmineurContext);
-
-  const { openAll, setOpenAll } = context.OpenAllContext;
-  const { closeAll } = context.CloseAllContext;
-  const { openEmpty, setOpenEmpty } = context.OpenEmptyContext;
-
-  const adjacentEmptyCells = cellulesVides.filter(
-    (emptyCell) =>
-      Math.abs(emptyCell.xelement - x) <= 1 &&
-      Math.abs(emptyCell.yelement - y) <= 1 &&
-      !(emptyCell.xelement === x && emptyCell.yelement === y)
-  );
-
-  useEffect(() => {
-    if (closeAll) {
-      setOpened(false);
-    }
-  }, [closeAll]);
-
-  useEffect(() => {
-    if (openAll) {
-      setOpened(true);
-    }
-  }, [openAll]);
-
-  useEffect(() => {
-    if (
-      openEmpty &&
-      bombsAdj === 0 &&
-      adjacentEmptyCells.filter((elem) => {
-        return openEmpty.some(
-          (open) => elem.xelement === open.x && elem.yelement === open.y
-        );
-      })
-    ) {
-      setOpenEmpty([...openEmpty, { x: x, y: y }]);
-
-      console.log("got this far");
-      setOpened(true);
-    }
-  }, [openEmpty]);
-
-  function opening() {
-    if (bomb === true) {
-      setBombIcon("💥");
-      setOpenAll(true);
-    } else if (bombsAdj === 0) {
-      setOpenEmpty([...openEmpty, { x: x, y: y }]);
-    }
-    setOpened(true);
-  }
-  console.log(openEmpty);
+function Cell({ x, y, bomb, bombsAdj }) {
   return (
-    <CellComponent
-      bombsAdj={bombsAdj}
-      onClick={() => opening()}
-      opened={opened}>
-      {/* {opened ? (bomb ? bombIcon : bombs) : ""} */}
-      {bomb ? bombIcon : bombsAdj}
-    </CellComponent>
+    <CellComponent />
   );
 }
 
@@ -107,6 +45,7 @@ const CellComponent = styled.div`
 
       case 7:
         return "darkslategrey";
+
       case 8:
         return "white";
     }

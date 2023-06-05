@@ -10,17 +10,13 @@ function GameZone({ height, width }) {
 
   const { bombs } = context.BombsContext;
   const { gameLaunch, setGameLaunch } = context.GameLaunchContext;
-  const { setOpenAll } = context.OpenAllContext;
-  const { closeAll, setCloseAll } = context.CloseAllContext;
 
   const [cells, setCells] = useState([]);
+  const [cellulesVides, setCellulesVides] = useState([]);
+
   let bombsAdj = 0;
 
   useEffect(() => {
-    let cellulesVides = [];
-    setOpenAll(false);
-    setCloseAll(true);
-    setCloseAll(!closeAll);
     if (gameLaunch) {
       const qtyCells = width * height;
       let generatedCells = [];
@@ -49,7 +45,6 @@ function GameZone({ height, width }) {
             y={y}
             bomb={bomb}
             bombsAdj={bombsAdj}
-            cellulesVides={cellulesVides}
           />
         );
         bomb = false;
@@ -85,12 +80,15 @@ function GameZone({ height, width }) {
         });
 
         if (bombsAdjacent === 0 && !bombelement) {
-          cellulesVides.push({ xelement: xelement, yelement: yelement });
+          console.log("got this far");
+          setCellulesVides([
+            ...cellulesVides,
+            { xelement: xelement, yelement: yelement },
+          ]);
         }
 
         const cellWithAdjBombs = cloneElement(element, {
           bombsAdj: bombsAdjacent,
-          cellulesVides: cellulesVides,
         });
         generatedCells[index] = cellWithAdjBombs;
       });
@@ -98,6 +96,7 @@ function GameZone({ height, width }) {
       setCells(generatedCells);
     }
   }, [gameLaunch]);
+
   return (
     <>
       <Grid
