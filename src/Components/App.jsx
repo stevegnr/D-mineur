@@ -13,7 +13,7 @@ function App() {
   const [gameLaunch, setGameLaunch] = useState(false);
   const [openAll, setOpenAll] = useState(false);
   const [closeAll, setCloseAll] = useState(false);
-  const [openEmpty, setOpenEmpty] = useState({});
+  const [openEmpty, setOpenEmpty] = useState([]);
 
   return (
     <DmineurContext.Provider

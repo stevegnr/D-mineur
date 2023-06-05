@@ -16,13 +16,9 @@ function Cell({ x, y, bomb, bombsAdj, cellulesVides }) {
 
   const adjacentEmptyCells = cellulesVides.filter(
     (emptyCell) =>
-      emptyCell.xelement - x <= 1 &&
-      emptyCell.xelement - x >= -1 &&
-      emptyCell.yelement - y <= 1 &&
-      emptyCell.yelement - y >= -1
+      Math.abs(emptyCell.xelement - x) <= 1 &&
+      Math.abs(emptyCell.yelement - y) <= 1
   );
-
-  console.log(adjacentEmptyCells)
 
   useEffect(() => {
     if (closeAll) {
@@ -38,13 +34,14 @@ function Cell({ x, y, bomb, bombsAdj, cellulesVides }) {
 
   useEffect(() => {
     if (
-      openEmpty &&
+      openEmpty !== {} &&
       bombsAdj === 0 &&
       adjacentEmptyCells.some(
         (elem) => elem.xelement === x && elem.yelement === y
       )
     ) {
       console.log("got this far");
+      setOpened(true);
     }
   }, [openEmpty]);
 

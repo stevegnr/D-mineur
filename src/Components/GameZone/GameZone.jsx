@@ -12,13 +12,11 @@ function GameZone({ height, width }) {
   const { gameLaunch, setGameLaunch } = context.GameLaunchContext;
   const { setOpenAll } = context.OpenAllContext;
   const { closeAll, setCloseAll } = context.CloseAllContext;
-  const { setOpenEmpty } = context.OpenEmptyContext;
 
   const [cells, setCells] = useState([]);
   let bombsAdj = 0;
 
   useEffect(() => {
-    setOpenEmpty({})
     let cellulesVides = [];
     setOpenAll(false);
     setCloseAll(true);
@@ -87,8 +85,6 @@ function GameZone({ height, width }) {
         });
 
         if (bombsAdjacent === 0 && !bombelement) {
-          // setEmptyCells([...emptyCells, `${xelement}-${yelement}`]);
-          // console.log(emptyCells);
           cellulesVides.push({ xelement: xelement, yelement: yelement });
         }
 
