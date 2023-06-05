@@ -19,7 +19,7 @@ function Cell({ x, y, bomb, bombsAdj, cellulesVides }) {
       Math.abs(emptyCell.yelement - y) <= 1 &&
       !(emptyCell.xelement === x && emptyCell.yelement === y)
   );
-  // console.log({ x: x, y: y, adjacentEmptyCells, openEmpty: openEmpty });
+
   useEffect(() => {
     if (closeAll) {
       setOpened(false);
@@ -36,10 +36,14 @@ function Cell({ x, y, bomb, bombsAdj, cellulesVides }) {
     if (
       openEmpty &&
       bombsAdj === 0 &&
-      adjacentEmptyCells.some(
-        (elem) => elem.xelement === openEmpty.x && elem.yelement === openEmpty.y
-      )
+      adjacentEmptyCells.filter((elem) => {
+        return openEmpty.some(
+          (open) => elem.xelement === open.x && elem.yelement === open.y
+        );
+      })
     ) {
+      setOpenEmpty([...openEmpty, { x: x, y: y }]);
+
       console.log("got this far");
       setOpened(true);
     }
@@ -50,10 +54,11 @@ function Cell({ x, y, bomb, bombsAdj, cellulesVides }) {
       setBombIcon("💥");
       setOpenAll(true);
     } else if (bombsAdj === 0) {
-      setOpenEmpty({ x: x, y: y });
+      setOpenEmpty([...openEmpty, { x: x, y: y }]);
     }
     setOpened(true);
   }
+  console.log(openEmpty);
   return (
     <CellComponent
       bombsAdj={bombsAdj}
