@@ -1,19 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DmineurContext } from "../../Context/Context";
 import { styled } from "styled-components";
 
 function Cell({ x, y, bomb, bombsAdj, opened }) {
   const context = useContext(DmineurContext);
-  const { setOpen } = context.OpenContext;
-  console.log({ x: x, y: y, bomb: bomb, bombsAdj: bombsAdj, opened: opened });
+  const { open, setOpen } = context.OpenContext;
+  const [bombIcon, setBombIcon] = useState("💣");
+
+  useEffect(() => {
+    if (open.x === x && open.y === y && bomb) {
+      setBombIcon("💥");
+    }
+  }, [open]);
+
   return (
     <CellComponent
       bombsAdj={bombsAdj}
       opened={opened}
-      onClick={() => setOpen({ x: x, y: y })}>
-      {opened && bombsAdj}
+      onClick={() => setOpen({ x: x, y: y, bomb: bomb, bombsAdj: bombsAdj })}>
+      {opened ? (bomb ? bombIcon : bombsAdj) : ""}
     </CellComponent>
   );
 }
@@ -23,7 +30,7 @@ export default Cell;
 const CellComponent = styled.div`
   height: 30px;
   width: 30px;
-  background-color: ${(props) => (props.opened ? "" : "#bab3b3")};
+  background-color: ${(props) => (props.opened ? "#e3dede" : "#bab3b3")};
   border: 1px solid black;
   border-radius: 5px;
   display: flex;
@@ -34,7 +41,7 @@ const CellComponent = styled.div`
   color: ${(props) => {
     switch (props.bombsAdj) {
       case 0:
-        return "lightgray";
+        return "#e3dede";
 
       case 1:
         return "green";

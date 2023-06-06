@@ -14,8 +14,8 @@ function GameZone({ height, width }) {
 
   const [cells, setCells] = useState([]);
   const [cellulesVides, setCellulesVides] = useState([]);
-  
-  let opened=false
+
+  let opened = false;
   let bombsAdj = 0;
 
   useEffect(() => {
@@ -47,7 +47,6 @@ function GameZone({ height, width }) {
             y={y}
             bomb={bomb}
             bombsAdj={bombsAdj}
-            onClick={() => handleOpenCell(x, y)}
             opened={opened}
           />
         );
@@ -100,8 +99,24 @@ function GameZone({ height, width }) {
     }
   }, [gameLaunch]);
 
-  const updateCell = (x, y, content) => {
-    console.log("got this far", x, y, content);
+  function handleOpenCell(x, y, bomb, bombsAdj) {
+    console.log(open);
+    if (bomb) {
+      setCells((prevCells) =>
+        prevCells.map((cell) => {
+          return cloneElement(cell, { opened: true });
+        })
+      );
+    } else if (bombsAdj === 0) {
+      setCells((prevCells) =>
+        prevCells.map((cell) => {
+          if (cell.props.bombsAdj === 0 && !cell.props.bomb) {
+            return cloneElement(cell, { opened: true });
+          }
+          return cell;
+        })
+      );
+    }
     setCells((prevCells) =>
       prevCells.map((cell) => {
         if (cell.props.x === x && cell.props.y === y) {
@@ -110,15 +125,10 @@ function GameZone({ height, width }) {
         return cell;
       })
     );
-  };
-
-  function handleOpenCell(x, y) {
-    const cellContent = true;
-    updateCell(x, y, cellContent);
   }
 
   useEffect(() => {
-    handleOpenCell(open.x, open.y);
+    handleOpenCell(open.x, open.y, open.bomb, open.bombsAdj);
   }, [open]);
 
   return (
