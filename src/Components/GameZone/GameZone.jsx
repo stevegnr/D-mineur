@@ -10,10 +10,12 @@ function GameZone({ height, width }) {
 
   const { bombs } = context.BombsContext;
   const { gameLaunch, setGameLaunch } = context.GameLaunchContext;
+  const { open } = context.OpenContext;
 
   const [cells, setCells] = useState([]);
   const [cellulesVides, setCellulesVides] = useState([]);
-
+  
+  let opened=false
   let bombsAdj = 0;
 
   useEffect(() => {
@@ -45,6 +47,8 @@ function GameZone({ height, width }) {
             y={y}
             bomb={bomb}
             bombsAdj={bombsAdj}
+            onClick={() => handleOpenCell(x, y)}
+            opened={opened}
           />
         );
         bomb = false;
@@ -80,7 +84,6 @@ function GameZone({ height, width }) {
         });
 
         if (bombsAdjacent === 0 && !bombelement) {
-          console.log("got this far");
           setCellulesVides([
             ...cellulesVides,
             { xelement: xelement, yelement: yelement },
@@ -96,6 +99,27 @@ function GameZone({ height, width }) {
       setCells(generatedCells);
     }
   }, [gameLaunch]);
+
+  const updateCell = (x, y, content) => {
+    console.log("got this far", x, y, content);
+    setCells((prevCells) =>
+      prevCells.map((cell) => {
+        if (cell.props.x === x && cell.props.y === y) {
+          return cloneElement(cell, { opened: true });
+        }
+        return cell;
+      })
+    );
+  };
+
+  function handleOpenCell(x, y) {
+    const cellContent = true;
+    updateCell(x, y, cellContent);
+  }
+
+  useEffect(() => {
+    handleOpenCell(open.x, open.y);
+  }, [open]);
 
   return (
     <>

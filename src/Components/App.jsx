@@ -10,6 +10,7 @@ function App() {
   const [height, setHeight] = useState(10);
   const [bombs, setBombs] = useState(10);
   const [gameLaunch, setGameLaunch] = useState(false);
+  const [open, setOpen] = useState({ x: 0, y: 0 });
 
   return (
     <DmineurContext.Provider
@@ -18,6 +19,7 @@ function App() {
         HeightContext: { height, setHeight },
         BombsContext: { bombs, setBombs },
         GameLaunchContext: { gameLaunch, setGameLaunch },
+        OpenContext: { open, setOpen },
       }}>
       <Wrapper>
         <Header />

@@ -1,10 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
+import { useContext } from "react";
+import { DmineurContext } from "../../Context/Context";
 import { styled } from "styled-components";
 
-function Cell({ x, y, bomb, bombsAdj }) {
+function Cell({ x, y, bomb, bombsAdj, opened }) {
+  const context = useContext(DmineurContext);
+  const { setOpen } = context.OpenContext;
+  console.log({ x: x, y: y, bomb: bomb, bombsAdj: bombsAdj, opened: opened });
   return (
-    <CellComponent />
+    <CellComponent
+      bombsAdj={bombsAdj}
+      opened={opened}
+      onClick={() => setOpen({ x: x, y: y })}>
+      {opened && bombsAdj}
+    </CellComponent>
   );
 }
 
