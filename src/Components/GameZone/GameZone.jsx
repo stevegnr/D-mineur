@@ -13,7 +13,7 @@ function GameZone({ height, width }) {
   const { open } = context.OpenContext;
 
   const [cells, setCells] = useState([]);
-  let cellulesVides = [];
+  let emptyCells = [];
 
   let opened = false;
   let bombsAdj = 0;
@@ -83,7 +83,8 @@ function GameZone({ height, width }) {
         });
 
         if (bombsAdjacent === 0 && !bombelement) {
-          cellulesVides.push({ xelement: xelement, yelement: yelement });
+          emptyCells.push({ xelement: xelement, yelement: yelement });
+          console.log(emptyCells);
         }
 
         const cellWithAdjBombs = cloneElement(element, {
@@ -96,6 +97,15 @@ function GameZone({ height, width }) {
     }
   }, [gameLaunch]);
 
+  
+  function openEmptyAdjCells(cellx, celly) {
+    console.log(emptyCells);
+    emptyCells.forEach((element) => {
+      console.log("got here");
+      console.log(element);
+    });
+  }
+
   function handleOpenCell(x, y, bomb, bombsAdj) {
     if (bomb) {
       setCells((prevCells) =>
@@ -104,19 +114,9 @@ function GameZone({ height, width }) {
         })
       );
     } else if (bombsAdj === 0) {
-      setCells((prevCells) =>
-        prevCells.map((cell) => {
-          if (cell.props.bombsAdj === 0 && !cell.props.bomb) {
-            if (
-              Math.abs(cell.props.x - open.x) <= 1 &&
-              Math.abs(cell.props.y - open.y)
-            ) {
-              return cloneElement(cell, { opened: true });
-            }
-          }
-          return cell;
-        })
-      );
+      console.log(emptyCells);
+
+      openEmptyAdjCells(x, y);
     }
     setCells((prevCells) =>
       prevCells.map((cell) => {
