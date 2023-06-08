@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { cloneElement, useContext, useEffect, useState } from "react";
+import { styled } from "styled-components";
 import { DmineurContext } from "../../Context/Context";
 import Cell from "../Cell/Cell";
-import { styled } from "styled-components";
 
 function GameZone({ height, width }) {
   const context = useContext(DmineurContext);
 
   const { bombs } = context.BombsContext;
   const { gameLaunch, setGameLaunch } = context.GameLaunchContext;
-  const { open } = context.OpenContext;
+  const { open, setOpen } = context.OpenContext;
 
   const [cells, setCells] = useState([]);
   let emptyCells = [];
@@ -100,8 +100,40 @@ function GameZone({ height, width }) {
     }
   }, [gameLaunch]);
 
-  function openEmptyAdjCells(cellx, celly) {
-    console.log(emptyCellsState);
+  function openEmptyAdjCells(cellx, celly, emptyCellsState) {
+    debugger;
+    console.log({ cellx, celly });
+    console.log({ emptyCellsState: emptyCellsState });
+    const removeFromEmptyCellsState = emptyCellsState.filter(
+      (element) => !(element.xelement === cellx && element.yelement === celly)
+    );
+
+    console.log({ removeFromEmptyCellsState });
+
+    // On filtre pour ne traiter que les cellules adjacentes
+    const cellsToOpen = removeFromEmptyCellsState.filter(
+      (element) =>
+        Math.abs(element.xelement - cellx) <= 1 &&
+        Math.abs(element.yelement - celly) <= 1
+    );
+
+    console.log({ cellsToOpen: cellsToOpen });
+
+    const updatedEmptyCellsState = removeFromEmptyCellsState.filter(
+      (cell) => !cellsToOpen.includes(cell)
+    );
+
+    cellsToOpen.forEach((element) => {
+      console.log(element);
+      setOpen({ x: element.xelement, y: element.yelement });
+      openEmptyAdjCells(
+        element.xelement,
+        element.yelement,
+        updatedEmptyCellsState
+      );
+    });
+
+    setEmptyCellsState(updatedEmptyCellsState);
   }
 
   function handleOpenCell(x, y, bomb, bombsadj) {
@@ -114,7 +146,7 @@ function GameZone({ height, width }) {
       );
     } else if (bombsadj === 0) {
       // Ouvre toutes les cellules vides adjacentes à une cellule vide ouverte
-      openEmptyAdjCells(x, y);
+      openEmptyAdjCells(x, y, emptyCellsState);
     }
     setCells((prevCells) =>
       prevCells.map((cell) => {
@@ -125,6 +157,9 @@ function GameZone({ height, width }) {
       })
     );
   }
+  useEffect(() => {
+    console.log({ emptyCellsState: emptyCellsState });
+  }, [emptyCellsState]);
 
   useEffect(() => {
     handleOpenCell(open.x, open.y, open.bomb, open.bombsadj);
