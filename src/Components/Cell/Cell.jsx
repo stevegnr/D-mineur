@@ -2,9 +2,9 @@
 /* eslint-disable react/prop-types */
 import { useContext, useEffect, useState } from "react";
 import { DmineurContext } from "../../Context/Context";
-import { styled } from "styled-components";
+import styled from "styled-components";
 
-function Cell({ x, y, bomb, bombsAdj, opened }) {
+function Cell({ x, y, bomb, bombsadj, opened }) {
   const context = useContext(DmineurContext);
   const { open, setOpen } = context.OpenContext;
   const [bombIcon, setBombIcon] = useState("💣");
@@ -17,10 +17,10 @@ function Cell({ x, y, bomb, bombsAdj, opened }) {
 
   return (
     <CellComponent
-      bombsAdj={bombsAdj}
+      bombsadj={bombsadj}
       opened={opened}
-      onClick={() => setOpen({ x: x, y: y, bomb: bomb, bombsAdj: bombsAdj })}>
-      {opened ? (bomb ? bombIcon : bombsAdj) : ""}
+      onClick={() => setOpen({ x: x, y: y, bomb: bomb, bombsadj: bombsadj })}>
+      {opened ? (bomb ? bombIcon : bombsadj) : ""}
     </CellComponent>
   );
 }
@@ -39,7 +39,7 @@ const CellComponent = styled.div`
   font-size: large;
   font-weight: bold;
   color: ${(props) => {
-    switch (props.bombsAdj) {
+    switch (props.bombsadj) {
       case 0:
         return "#e3dede";
 
