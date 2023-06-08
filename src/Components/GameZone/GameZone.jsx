@@ -14,99 +14,94 @@ function GameZone({ height, width }) {
 
   const [cells, setCells] = useState([]);
   let emptyCells = [];
-
+  let [emptyCellsState, setEmptyCellsState] = useState(emptyCells);
   let bombsadj = 0;
 
   useEffect(() => {
     // Création et remplissage de la grille
-    async function generateGame() {
-      if (gameLaunch) {
-        const qtyCells = width * height;
-        let generatedCells = [];
-        let min = 1;
-        let max = qtyCells;
-        let bombsToBePlaced = +bombs;
-        let bomb = false;
-        let x = 1;
-        let y = 1;
+    if (gameLaunch) {
+      const qtyCells = width * height;
+      let generatedCells = [];
+      let min = 1;
+      let max = qtyCells;
+      let bombsToBePlaced = +bombs;
+      let bomb = false;
+      let x = 1;
+      let y = 1;
 
-        // Place aléatoirement les bombes sur la grille
-        for (let i = 0; i < qtyCells; i++, x++) {
-          let alea = Math.floor(Math.random() * (max - min + 1)) + min;
-          if (x > width) {
-            x = 1;
-            y++;
-          }
-          if (alea <= bombsToBePlaced) {
-            bombsToBePlaced--;
-            bomb = true;
-          }
-          max--;
-          generatedCells.push(
-            <Cell
-              key={`cell-${x}-${y}`}
-              x={x}
-              y={y}
-              bomb={bomb}
-              bombsadj={bombsadj}
-              isOpened={false}
-            />
+      // Place aléatoirement les bombes sur la grille
+      for (let i = 0; i < qtyCells; i++, x++) {
+        let alea = Math.floor(Math.random() * (max - min + 1)) + min;
+        if (x > width) {
+          x = 1;
+          y++;
+        }
+        if (alea <= bombsToBePlaced) {
+          bombsToBePlaced--;
+          bomb = true;
+        }
+        max--;
+        generatedCells.push(
+          <Cell
+            key={`cell-${x}-${y}`}
+            x={x}
+            y={y}
+            bomb={bomb}
+            bombsadj={bombsadj}
+            isopened={false}
+          />
+        );
+        bomb = false;
+      }
+
+      // Vérifie les bombes sur les cases adjacentes et remplit la case avec cette valeur
+      generatedCells.forEach((element, index) => {
+        const xelement = element.props.x;
+        const yelement = element.props.y;
+        const bombelement = element.props.bomb;
+        let bombsAdjacent = 0;
+
+        const adjacentCells = [
+          { adjx: xelement - 1, adjy: yelement },
+          { adjx: xelement + 1, adjy: yelement },
+          { adjx: xelement, adjy: yelement - 1 },
+          { adjx: xelement, adjy: yelement + 1 },
+          { adjx: xelement - 1, adjy: yelement - 1 },
+          { adjx: xelement - 1, adjy: yelement + 1 },
+          { adjx: xelement + 1, adjy: yelement - 1 },
+          { adjx: xelement + 1, adjy: yelement + 1 }, // Bas droite
+        ];
+
+        adjacentCells.forEach((el) => {
+          const { adjx, adjy } = el;
+          const adjacentCell = generatedCells.find(
+            (cell) =>
+              cell.props.x === adjx && cell.props.y === adjy && cell.props.bomb
           );
-          bomb = false;
+
+          if (adjacentCell) {
+            bombsAdjacent++;
+          }
+        });
+
+        // Génère le tableau contenant toutes les cases vides de la grille
+        if (bombsAdjacent === 0 && !bombelement) {
+          emptyCells.push({ xelement: xelement, yelement: yelement });
         }
 
-        // Vérifie les bombes sur les cases adjacentes et remplit la case avec cette valeur
-        generatedCells.forEach((element, index) => {
-          const xelement = element.props.x;
-          const yelement = element.props.y;
-          const bombelement = element.props.bomb;
-          let bombsAdjacent = 0;
-
-          const adjacentCells = [
-            { adjx: xelement - 1, adjy: yelement }, // Gauche
-            { adjx: xelement + 1, adjy: yelement }, // Droite
-            { adjx: xelement, adjy: yelement - 1 }, // Haut
-            { adjx: xelement, adjy: yelement + 1 }, // Bas
-            { adjx: xelement - 1, adjy: yelement - 1 }, // Haut gauche
-            { adjx: xelement - 1, adjy: yelement + 1 }, // Bas gauche
-            { adjx: xelement + 1, adjy: yelement - 1 }, // Haut droite
-            { adjx: xelement + 1, adjy: yelement + 1 }, // Bas droite
-          ];
-
-          adjacentCells.forEach((el) => {
-            const { adjx, adjy } = el;
-            const adjacentCell = generatedCells.find(
-              (cell) =>
-                cell.props.x === adjx &&
-                cell.props.y === adjy &&
-                cell.props.bomb
-            );
-
-            if (adjacentCell) {
-              bombsAdjacent++;
-            }
-          });
-
-          // Génère le tableau contenant toutes les cases vides de la grille
-          if (bombsAdjacent === 0 && !bombelement) {
-            emptyCells.push({ xelement: xelement, yelement: yelement });
-          }
-
-          const cellWithAdjBombs = cloneElement(element, {
-            bombsadj: bombsAdjacent,
-          });
-          generatedCells[index] = cellWithAdjBombs;
+        const cellWithAdjBombs = cloneElement(element, {
+          bombsadj: bombsAdjacent,
         });
-        setGameLaunch(!gameLaunch);
-        setCells(generatedCells);
-      }
+        generatedCells[index] = cellWithAdjBombs;
+      });
+      setGameLaunch(!gameLaunch);
+      setCells(generatedCells);
+      setEmptyCellsState(emptyCells);
     }
-
-    generateGame();
   }, [gameLaunch]);
 
   function openEmptyAdjCells(cellx, celly) {
-    console.log(emptyCells);
+    console.log(emptyCellsState);
   }
 
   function handleOpenCell(x, y, bomb, bombsadj) {
@@ -114,7 +109,7 @@ function GameZone({ height, width }) {
       // Ouvre toutes les cases si le joueur tombe sur une bombe
       setCells((prevCells) =>
         prevCells.map((cell) => {
-          return cloneElement(cell, { isOpened: true });
+          return cloneElement(cell, { isopened: true });
         })
       );
     } else if (bombsadj === 0) {
@@ -124,7 +119,7 @@ function GameZone({ height, width }) {
     setCells((prevCells) =>
       prevCells.map((cell) => {
         if (cell.props.x === x && cell.props.y === y) {
-          return cloneElement(cell, { isOpened: true });
+          return cloneElement(cell, { isopened: true });
         }
         return cell;
       })

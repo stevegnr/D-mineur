@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { DmineurContext } from "../../Context/Context";
 import styled from "styled-components";
 
-function Cell({ x, y, bomb, bombsadj, isOpened }) {
+function Cell({ x, y, bomb, bombsadj, isopened }) {
   const context = useContext(DmineurContext);
   const { open, setOpen } = context.OpenContext;
   const [bombIcon, setBombIcon] = useState("💣");
@@ -18,9 +18,9 @@ function Cell({ x, y, bomb, bombsadj, isOpened }) {
   return (
     <CellComponent
       bombsadj={bombsadj}
-      isOpened={isOpened}
+      isopened={isopened}
       onClick={() => setOpen({ x: x, y: y, bomb: bomb, bombsadj: bombsadj })}>
-      {isOpened ? (bomb ? bombIcon : bombsadj) : ""}
+      {isopened ? (bomb ? bombIcon : bombsadj) : ""}
     </CellComponent>
   );
 }
@@ -30,7 +30,7 @@ export default Cell;
 const CellComponent = styled.div`
   height: 30px;
   width: 30px;
-  background-color: ${(props) => (props.isOpened ? "#e3dede" : "#bab3b3")};
+  background-color: ${(props) => (props.isopened ? "#e3dede" : "#bab3b3")};
   border: 1px solid black;
   border-radius: 5px;
   display: flex;
