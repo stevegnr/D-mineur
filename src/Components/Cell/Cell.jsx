@@ -16,12 +16,26 @@ function Cell({ x, y, bomb, bombsadj, isopened }) {
   }, [open]);
 
   return (
-    <CellComponent
-      bombsadj={bombsadj}
-      isopened={isopened}
-      onClick={() => setOpen({ x: x, y: y, bomb: bomb, bombsadj: bombsadj })}>
-      {isopened ? (bomb ? bombIcon : bombsadj) : ""}
-    </CellComponent>
+    <>
+      {isopened ? (
+        <CellComponent
+          bombsadj={bombsadj}
+          isopened={isopened}
+          onClick={() =>
+            setOpen({ x: x, y: y, bomb: bomb, bombsadj: bombsadj })
+          }>
+          {isopened ? (bomb ? bombIcon : bombsadj) : ""}
+        </CellComponent>
+      ) : (
+        <CellComponent
+          isopened={isopened}
+          onClick={() =>
+            setOpen({ x: x, y: y, bomb: bomb, bombsadj: bombsadj })
+          }>
+          {isopened ? (bomb ? bombIcon : bombsadj) : ""}
+        </CellComponent>
+      )}
+    </>
   );
 }
 
