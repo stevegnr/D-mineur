@@ -1,13 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useContext } from "react";
-import { DmineurContext } from "../../Context/Context";
 import { styled } from "styled-components";
+import { DmineurContext } from "../../Context/Context";
 
 function Menu() {
   const context = useContext(DmineurContext);
   const { width, setWidth } = context.WidthContext;
   const { height, setHeight } = context.HeightContext;
-  const { setBombs } = context.BombsContext;
+  const { bombs, setBombs } = context.BombsContext;
   const { setGameLaunch } = context.GameLaunchContext;
 
   return (
@@ -21,7 +21,7 @@ function Menu() {
         max={200}
         placeholder="Cases en largeur"
         onChange={(e) => setWidth(e.target.value)}
-        defaultValue={10}
+        defaultValue={width}
       />
       <label htmlFor="height">Cases en hauteur : </label>
       <input
@@ -32,7 +32,7 @@ function Menu() {
         max={200}
         placeholder="Cases en hauteur"
         onChange={(e) => setHeight(e.target.value)}
-        defaultValue={10}
+        defaultValue={height}
       />
       <label htmlFor="bombs">Bombes : </label>
       <input
@@ -43,7 +43,7 @@ function Menu() {
         max={width * height}
         placeholder="Bombes"
         onChange={(e) => setBombs(e.target.value)}
-        defaultValue={10}
+        defaultValue={bombs}
       />
       <button onClick={() => setGameLaunch(true)}>Go !</button>
     </StyledMenu>
