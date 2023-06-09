@@ -10,7 +10,7 @@ function GameZone({ height, width }) {
 
   const { bombs } = context.BombsContext;
   const { gameLaunch, setGameLaunch } = context.GameLaunchContext;
-  const { open, setOpen } = context.OpenContext;
+  const { open } = context.OpenContext;
 
   const [cells, setCells] = useState([]);
   let emptyCells = [];
@@ -100,40 +100,37 @@ function GameZone({ height, width }) {
     }
   }, [gameLaunch]);
 
-  function openEmptyAdjCells(cellx, celly, emptyCellsState) {
-    debugger;
-    console.log({ cellx, celly });
-    console.log({ emptyCellsState: emptyCellsState });
-    const removeFromEmptyCellsState = emptyCellsState.filter(
-      (element) => !(element.xelement === cellx && element.yelement === celly)
-    );
+  function openEmptyAdjCells(
+    cellx,
+    celly,
+    emptyCellsState,
+    processedCells = []
+  ) {
+    const currentCell = { xelement: cellx, yelement: celly };
+    processedCells.push(currentCell);
 
-    console.log({ removeFromEmptyCellsState });
-
-    // On filtre pour ne traiter que les cellules adjacentes
-    const cellsToOpen = removeFromEmptyCellsState.filter(
+    const cellsToOpen = emptyCellsState.filter(
       (element) =>
         Math.abs(element.xelement - cellx) <= 1 &&
-        Math.abs(element.yelement - celly) <= 1
-    );
-
-    console.log({ cellsToOpen: cellsToOpen });
-
-    const updatedEmptyCellsState = removeFromEmptyCellsState.filter(
-      (cell) => !cellsToOpen.includes(cell)
+        Math.abs(element.yelement - celly) <= 1 &&
+        !processedCells.some(
+          (processed) =>
+            processed.xelement === element.xelement &&
+            processed.yelement === element.yelement
+        )
     );
 
     cellsToOpen.forEach((element) => {
-      console.log(element);
-      setOpen({ x: element.xelement, y: element.yelement });
+      processedCells.push(element);
       openEmptyAdjCells(
         element.xelement,
         element.yelement,
-        updatedEmptyCellsState
+        emptyCellsState,
+        processedCells
       );
     });
 
-    setEmptyCellsState(updatedEmptyCellsState);
+    return processedCells;
   }
 
   function handleOpenCell(x, y, bomb, bombsadj) {
@@ -146,20 +143,33 @@ function GameZone({ height, width }) {
       );
     } else if (bombsadj === 0) {
       // Ouvre toutes les cellules vides adjacentes à une cellule vide ouverte
-      openEmptyAdjCells(x, y, emptyCellsState);
+      const cellsToOpen = openEmptyAdjCells(x, y, emptyCellsState);
+      setCells((prevCells) =>
+        prevCells.map((cell) => {
+          if (
+            (cell.props.x === x && cell.props.y === y) ||
+            cellsToOpen.some(
+              (opened) =>
+                opened.xelement === cell.props.x &&
+                opened.yelement === cell.props.y
+            )
+          ) {
+            return cloneElement(cell, { isopened: true });
+          }
+          return cell;
+        })
+      );
+    } else {
+      setCells((prevCells) =>
+        prevCells.map((cell) => {
+          if (cell.props.x === x && cell.props.y === y) {
+            return cloneElement(cell, { isopened: true });
+          }
+          return cell;
+        })
+      );
     }
-    setCells((prevCells) =>
-      prevCells.map((cell) => {
-        if (cell.props.x === x && cell.props.y === y) {
-          return cloneElement(cell, { isopened: true });
-        }
-        return cell;
-      })
-    );
   }
-  useEffect(() => {
-    console.log({ emptyCellsState: emptyCellsState });
-  }, [emptyCellsState]);
 
   useEffect(() => {
     handleOpenCell(open.x, open.y, open.bomb, open.bombsadj);
