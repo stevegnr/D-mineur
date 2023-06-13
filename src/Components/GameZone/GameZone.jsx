@@ -10,11 +10,10 @@ function GameZone({ height, width }) {
 
   const { bombs } = context.BombsContext;
   const { gameLaunch, setGameLaunch } = context.GameLaunchContext;
-  const { open } = context.OpenContext;
+  const { open, setOpen } = context.OpenContext;
 
   const [cells, setCells] = useState([]);
   let emptyCells = [];
-  let [emptyCellsState, setEmptyCellsState] = useState(emptyCells);
   let bombsadj = 0;
 
   useEffect(() => {
@@ -62,13 +61,13 @@ function GameZone({ height, width }) {
         let bombsAdjacent = 0;
 
         const adjacentCells = [
-          { adjx: xelement - 1, adjy: yelement },
-          { adjx: xelement + 1, adjy: yelement },
-          { adjx: xelement, adjy: yelement - 1 },
-          { adjx: xelement, adjy: yelement + 1 },
-          { adjx: xelement - 1, adjy: yelement - 1 },
-          { adjx: xelement - 1, adjy: yelement + 1 },
-          { adjx: xelement + 1, adjy: yelement - 1 },
+          { adjx: xelement - 1, adjy: yelement }, // Gauche
+          { adjx: xelement + 1, adjy: yelement }, // Droite
+          { adjx: xelement, adjy: yelement - 1 }, // Haut
+          { adjx: xelement, adjy: yelement + 1 }, // Bas
+          { adjx: xelement - 1, adjy: yelement - 1 }, // Bas droite
+          { adjx: xelement - 1, adjy: yelement + 1 }, // Haut gauche
+          { adjx: xelement + 1, adjy: yelement - 1 }, // Haut droite
           { adjx: xelement + 1, adjy: yelement + 1 }, // Bas droite
         ];
 
@@ -96,69 +95,36 @@ function GameZone({ height, width }) {
       });
       setGameLaunch(!gameLaunch);
       setCells(generatedCells);
-      setEmptyCellsState(emptyCells);
     }
   }, [gameLaunch]);
 
-  function openEmptyAdjCells(
-    cellx,
-    celly,
-    emptyCellsState,
-    processedCells = []
-  ) {
-    const currentCell = { xelement: cellx, yelement: celly };
-    processedCells.push(currentCell);
+  async function openAdjCells(cellx, celly) {
+    const adjacentCells = [
+      { adjx: cellx - 1, adjy: celly }, // Gauche
+      { adjx: cellx + 1, adjy: celly }, // Droite
+      { adjx: cellx, adjy: celly - 1 }, // Haut
+      { adjx: cellx, adjy: celly + 1 }, // Bas
+      { adjx: cellx - 1, adjy: celly - 1 }, // Bas droite
+      { adjx: cellx - 1, adjy: celly + 1 }, // Haut gauche
+      { adjx: cellx + 1, adjy: celly - 1 }, // Haut droite
+      { adjx: cellx + 1, adjy: celly + 1 }, // Bas droite
+    ];
 
-    const cellsToOpen = emptyCellsState.filter(
-      (element) =>
-        Math.abs(element.xelement - cellx) <= 1 &&
-        Math.abs(element.yelement - celly) <= 1 &&
-        !processedCells.some(
-          (processed) =>
-            processed.xelement === element.xelement &&
-            processed.yelement === element.yelement
-        )
-    );
-
-    cellsToOpen.forEach((element) => {
-      processedCells.push(element);
-      openEmptyAdjCells(
-        element.xelement,
-        element.yelement,
-        emptyCellsState,
-        processedCells
-      );
-    });
-
-    return processedCells;
+    for (const element of adjacentCells) {
+      const { adjx, adjy } = element;
+      await setOpen({ x: adjx, y: adjy });
+    }
   }
 
   function handleOpenCell(x, y, bomb, bombsadj) {
     if (bomb) {
       // Ouvre toutes les cases si le joueur tombe sur une bombe
       setCells((prevCells) =>
-        prevCells.map((cell) => {
-          return cloneElement(cell, { isopened: true });
-        })
+        prevCells.map((cell) => cloneElement(cell, { isopened: true }))
       );
     } else if (bombsadj === 0) {
       // Ouvre toutes les cellules vides adjacentes à une cellule vide ouverte
-      const cellsToOpen = openEmptyAdjCells(x, y, emptyCellsState);
-      setCells((prevCells) =>
-        prevCells.map((cell) => {
-          if (
-            (cell.props.x === x && cell.props.y === y) ||
-            cellsToOpen.some(
-              (opened) =>
-                opened.xelement === cell.props.x &&
-                opened.yelement === cell.props.y
-            )
-          ) {
-            return cloneElement(cell, { isopened: true });
-          }
-          return cell;
-        })
-      );
+      openAdjCells(x, y);
     } else {
       setCells((prevCells) =>
         prevCells.map((cell) => {
@@ -169,6 +135,20 @@ function GameZone({ height, width }) {
         })
       );
     }
+
+    setCells((prevCells) =>
+      prevCells.map((cell) => {
+        if (
+          cell.props.x === x &&
+          cell.props.y === y &&
+          cell.props.bombsadj === 0 &&
+          !cell.props.bomb
+        ) {
+          return cloneElement(cell, { isopened: true });
+        }
+        return cell;
+      })
+    );
   }
 
   useEffect(() => {

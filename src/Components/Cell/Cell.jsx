@@ -32,9 +32,7 @@ function Cell({ x, y, bomb, bombsadj, isopened }) {
           onClick={() =>
             setOpen({ x: x, y: y, bomb: bomb, bombsadj: bombsadj })
           }>
-            {/* {isopened ? (bomb ? bombIcon : bombsadj) : ""} */}
-            {/* Changed for debbuging */}
-          {bomb ? bombIcon : bombsadj}
+          {isopened ? (bomb ? bombIcon : bombsadj) : ""}
         </CellComponent>
       )}
     </>
@@ -46,7 +44,7 @@ export default Cell;
 const CellComponent = styled.div`
   height: 30px;
   width: 30px;
-  background-color: ${(props) => (props.isopened ? "#bab3b3" : "#e3dede")};
+  background-color: ${(props) => (props.isopened ? "#e3dede" : "#bab3b3")};
   border: 1px solid black;
   border-radius: 5px;
   display: flex;

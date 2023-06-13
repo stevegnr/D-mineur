@@ -6,9 +6,9 @@ import Header from "./Header/Header";
 import Menu from "./Menu/Menu";
 
 function App() {
-  const [width, setWidth] = useState(5);
-  const [height, setHeight] = useState(5);
-  const [bombs, setBombs] = useState(5);
+  const [width, setWidth] = useState(10);
+  const [height, setHeight] = useState(10);
+  const [bombs, setBombs] = useState(1);
   const [gameLaunch, setGameLaunch] = useState(false);
   const [open, setOpen] = useState({ x: 0, y: 0 });
 
