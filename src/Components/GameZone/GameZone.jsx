@@ -10,8 +10,7 @@ function GameZone({ height, width }) {
 
   const { bombs } = context.BombsContext;
   const { gameLaunch, setGameLaunch } = context.GameLaunchContext;
-  const { toOpen, setToOpen } = context.OpenContext; // Les cellules ajoutées dans ce tableau seront ouvertes puis supprimées de ce tableau
-  const [opened, setOpened] = useState([]); // Les cellules ouvertes sont ajoutées dans ce tableau
+  const { open, setOpen } = context.OpenContext; // Les cellules ajoutées dans ce tableau seront ouvertes
 
   const [cells, setCells] = useState([]);
   let emptyCells = [];
@@ -31,6 +30,7 @@ function GameZone({ height, width }) {
   }
 
   useEffect(() => {
+    setOpen([]);
     // Création et remplissage de la grille
     if (gameLaunch) {
       const qtyCells = width * height;
@@ -102,57 +102,63 @@ function GameZone({ height, width }) {
   }, [gameLaunch]);
 
   function handleOpenCell(x, y, bomb, bombsadj) {
-    if (opened.some((cell) => cell.x === x && cell.y === y)) {
-      console.log("Déjà ouverte");
-    } else {
-      setOpened([...opened, { x, y }]);
-      let openingCells = [];
+    let openingCells = [];
 
-      if (bomb) {
-        // Ouvre toutes les cases si le joueur tombe sur une bombe
-        openingCells.push(...cells);
-      } else if (bombsadj === 0) {
-        // Ouvre toutes les cellules vides adjacentes à une cellule vide ouverte
-        openingCells.push(...adjCells(x, y));
-        setToOpen([...toOpen, ...adjCells(x, y)]);
-      }
+    if (bomb) {
+      // Ouvre toutes les cases si le joueur tombe sur une bombe
+      openingCells.push(...cells);
+    } else if (bombsadj === 0) {
+      // Ouvre toutes les cellules vides adjacentes à une cellule vide ouverte
+      // fonction récursive sur adjcell
 
-      // Dans tous les cas, ouvrir la case sélectionnée
-      openingCells.push({ x, y });
-      // Mise à jour de cells
-      setCells((prevCells) => {
-        return prevCells.map((cell) => {
-          for (const element of openingCells) {
-            if (cell.props.x === element.x && cell.props.y === element.y) {
-              return cloneElement(cell, { isopened: true });
-            }
-          }
-          return cell;
-        });
-      });
+      openingAdjCells(x, y, openingCells);
     }
+
+    // Dans tous les cas, ouvrir la case sélectionnée
+    openingCells.push({ x, y });
+    // Mise à jour de cells
+    setCells((prevCells) => {
+      return prevCells.map((cell) => {
+        for (const element of openingCells) {
+          if (cell.props.x === element.x && cell.props.y === element.y) {
+            return cloneElement(cell, { isopened: true });
+          }
+        }
+        return cell;
+      });
+    });
+  }
+
+  function openingAdjCells(x, y, cellTab) {
+    adjCells(x, y).forEach((element) => {
+      if (!cellTab.includes({ x, y })) {
+        cellTab.push(element);
+      }
+      if (element.bombsadj === 0) {
+        openingAdjCells(element.x, element.y, cellTab);
+      }
+    });
   }
 
   useEffect(() => {
+    console.log({ open: open });
     async function openCells() {
-      toOpen.forEach((element) => {
-        // if (
-        //   toOpen.some((cell) => cell.x === element.x && cell.y === element.y)
-        // ) {
+      open.forEach((element) => {
+        if (
+          open.some(
+            (cell) =>
+              cell.x === element.x &&
+              cell.y === element.y &&
+              element.isopened === false
+          )
+        ) {
           handleOpenCell(element.x, element.y, element.bomb, element.bombsadj);
-        // }
+        }
       });
     }
 
     openCells();
-    if (toOpen.length > 0) {
-      setToOpen((prevToOpen) =>
-        prevToOpen.filter((element) => {
-          return !toOpen.includes(element); // Exclure les cellules déjà traitées
-        })
-      );
-    }
-  }, [toOpen]);
+  }, [open]);
 
   return (
     <>
