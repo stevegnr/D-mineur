@@ -6,31 +6,28 @@ import styled from "styled-components";
 
 function Cell({ x, y, bomb, bombsadj, isopened }) {
   const context = useContext(DmineurContext);
-  const { open, setOpen } = context.OpenContext;
+  const { toOpen, setToOpen } = context.OpenContext;
   const [bombIcon, setBombIcon] = useState("💣");
 
   useEffect(() => {
-    if (open.x === x && open.y === y && bomb) {
+    if (toOpen.x === x && toOpen.y === y && bomb) {
       setBombIcon("💥");
     }
-  }, [open]);
+  }, [toOpen]);
 
   return (
     <>
       {isopened ? (
         <CellComponent
           bombsadj={bombsadj}
-          isopened={isopened}
-          onClick={() =>
-            setOpen({ x: x, y: y, bomb: bomb, bombsadj: bombsadj })
-          }>
+          isopened={isopened}>
           {isopened ? (bomb ? bombIcon : bombsadj) : ""}
         </CellComponent>
       ) : (
         <CellComponent
           isopened={isopened}
           onClick={() =>
-            setOpen({ x: x, y: y, bomb: bomb, bombsadj: bombsadj })
+            setToOpen([...toOpen, { x: x, y: y, bomb: bomb, bombsadj: bombsadj }])
           }>
           {isopened ? (bomb ? bombIcon : bombsadj) : ""}
         </CellComponent>

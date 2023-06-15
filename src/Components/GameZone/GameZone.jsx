@@ -10,11 +10,25 @@ function GameZone({ height, width }) {
 
   const { bombs } = context.BombsContext;
   const { gameLaunch, setGameLaunch } = context.GameLaunchContext;
-  const { open, setOpen } = context.OpenContext;
+  const { toOpen, setToOpen } = context.OpenContext; // Les cellules ajoutées dans ce tableau seront ouvertes puis supprimées de ce tableau
+  const [opened, setOpened] = useState([]); // Les cellules ouvertes sont ajoutées dans ce tableau
 
   const [cells, setCells] = useState([]);
   let emptyCells = [];
   let bombsadj = 0;
+
+  function adjCells(x, y) {
+    return [
+      { x: x - 1, y: y }, // Gauche
+      { x: x + 1, y: y }, // Droite
+      { x: x, y: y - 1 }, // Haut
+      { x: x, y: y + 1 }, // Bas
+      { x: x - 1, y: y - 1 }, // Bas droite
+      { x: x - 1, y: y + 1 }, // Haut gauche
+      { x: x + 1, y: y - 1 }, // Haut droite
+      { x: x + 1, y: y + 1 }, // Bas droite
+    ];
+  }
 
   useEffect(() => {
     // Création et remplissage de la grille
@@ -60,22 +74,11 @@ function GameZone({ height, width }) {
         const bombelement = element.props.bomb;
         let bombsAdjacent = 0;
 
-        const adjacentCells = [
-          { adjx: xelement - 1, adjy: yelement }, // Gauche
-          { adjx: xelement + 1, adjy: yelement }, // Droite
-          { adjx: xelement, adjy: yelement - 1 }, // Haut
-          { adjx: xelement, adjy: yelement + 1 }, // Bas
-          { adjx: xelement - 1, adjy: yelement - 1 }, // Bas droite
-          { adjx: xelement - 1, adjy: yelement + 1 }, // Haut gauche
-          { adjx: xelement + 1, adjy: yelement - 1 }, // Haut droite
-          { adjx: xelement + 1, adjy: yelement + 1 }, // Bas droite
-        ];
-
-        adjacentCells.forEach((el) => {
-          const { adjx, adjy } = el;
+        adjCells(xelement, yelement).forEach((el) => {
+          const { x, y } = el;
           const adjacentCell = generatedCells.find(
             (cell) =>
-              cell.props.x === adjx && cell.props.y === adjy && cell.props.bomb
+              cell.props.x === x && cell.props.y === y && cell.props.bomb
           );
 
           if (adjacentCell) {
@@ -98,62 +101,64 @@ function GameZone({ height, width }) {
     }
   }, [gameLaunch]);
 
-  async function openAdjCells(cellx, celly) {
-    const adjacentCells = [
-      { adjx: cellx - 1, adjy: celly }, // Gauche
-      { adjx: cellx + 1, adjy: celly }, // Droite
-      { adjx: cellx, adjy: celly - 1 }, // Haut
-      { adjx: cellx, adjy: celly + 1 }, // Bas
-      { adjx: cellx - 1, adjy: celly - 1 }, // Bas droite
-      { adjx: cellx - 1, adjy: celly + 1 }, // Haut gauche
-      { adjx: cellx + 1, adjy: celly - 1 }, // Haut droite
-      { adjx: cellx + 1, adjy: celly + 1 }, // Bas droite
-    ];
-
-    for (const element of adjacentCells) {
-      const { adjx, adjy } = element;
-      await setOpen({ x: adjx, y: adjy });
-    }
-  }
-
   function handleOpenCell(x, y, bomb, bombsadj) {
-    if (bomb) {
-      // Ouvre toutes les cases si le joueur tombe sur une bombe
-      setCells((prevCells) =>
-        prevCells.map((cell) => cloneElement(cell, { isopened: true }))
-      );
-    } else if (bombsadj === 0) {
-      // Ouvre toutes les cellules vides adjacentes à une cellule vide ouverte
-      openAdjCells(x, y);
+    if (opened.some((cell) => cell.x === x && cell.y === y)) {
+      console.log("Déjà ouverte");
     } else {
-      setCells((prevCells) =>
-        prevCells.map((cell) => {
-          if (cell.props.x === x && cell.props.y === y) {
-            return cloneElement(cell, { isopened: true });
+      setOpened([...opened, { x, y }]);
+      let openingCells = [];
+
+      if (bomb) {
+        // Ouvre toutes les cases si le joueur tombe sur une bombe
+        console.log("Ouvrir toutes les cases");
+        openingCells.push(...cells);
+      } else if (bombsadj === 0) {
+        // Ouvre toutes les cellules vides adjacentes à une cellule vide ouverte
+        console.log("Ouvrir les cases adjacentes");
+        openingCells.push(...adjCells(x, y));
+        setToOpen([...toOpen, ...adjCells(x, y)]);
+      }
+
+      // Dans tous les cas, ouvrir la case sélectionnée
+      console.log("Ouvrir uniquement cette case");
+      openingCells.push({ x, y });
+      console.log({ openingCells: openingCells });
+      // Mise à jour de cells
+      setCells((prevCells) => {
+        return prevCells.map((cell) => {
+          for (const element of openingCells) {
+            if (cell.props.x === element.x && cell.props.y === element.y) {
+              return cloneElement(cell, { isopened: true });
+            }
           }
           return cell;
-        })
-      );
+        });
+      });
     }
-
-    setCells((prevCells) =>
-      prevCells.map((cell) => {
-        if (
-          cell.props.x === x &&
-          cell.props.y === y &&
-          cell.props.bombsadj === 0 &&
-          !cell.props.bomb
-        ) {
-          return cloneElement(cell, { isopened: true });
-        }
-        return cell;
-      })
-    );
+    console.log({ opened: opened });
   }
 
   useEffect(() => {
-    handleOpenCell(open.x, open.y, open.bomb, open.bombsadj);
-  }, [open]);
+    console.log({ toOpen: toOpen });
+    async function openCells() {
+      toOpen.forEach((element) => {
+        if (
+          toOpen.some((cell) => cell.x === element.x && cell.y === element.y)
+        ) {
+          handleOpenCell(element.x, element.y, element.bomb, element.bombsadj);
+        }
+      });
+    }
+
+    openCells();
+    if (toOpen.length > 0) {
+      setToOpen((prevToOpen) =>
+        prevToOpen.filter((element) => {
+          return !toOpen.includes(element); // Exclure les cellules déjà traitées
+        })
+      );
+    }
+  }, [toOpen]);
 
   return (
     <>
