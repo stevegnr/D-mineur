@@ -110,19 +110,15 @@ function GameZone({ height, width }) {
 
       if (bomb) {
         // Ouvre toutes les cases si le joueur tombe sur une bombe
-        console.log("Ouvrir toutes les cases");
         openingCells.push(...cells);
       } else if (bombsadj === 0) {
         // Ouvre toutes les cellules vides adjacentes à une cellule vide ouverte
-        console.log("Ouvrir les cases adjacentes");
         openingCells.push(...adjCells(x, y));
         setToOpen([...toOpen, ...adjCells(x, y)]);
       }
 
       // Dans tous les cas, ouvrir la case sélectionnée
-      console.log("Ouvrir uniquement cette case");
       openingCells.push({ x, y });
-      console.log({ openingCells: openingCells });
       // Mise à jour de cells
       setCells((prevCells) => {
         return prevCells.map((cell) => {
@@ -135,18 +131,16 @@ function GameZone({ height, width }) {
         });
       });
     }
-    console.log({ opened: opened });
   }
 
   useEffect(() => {
-    console.log({ toOpen: toOpen });
     async function openCells() {
       toOpen.forEach((element) => {
-        if (
-          toOpen.some((cell) => cell.x === element.x && cell.y === element.y)
-        ) {
+        // if (
+        //   toOpen.some((cell) => cell.x === element.x && cell.y === element.y)
+        // ) {
           handleOpenCell(element.x, element.y, element.bomb, element.bombsadj);
-        }
+        // }
       });
     }
 
