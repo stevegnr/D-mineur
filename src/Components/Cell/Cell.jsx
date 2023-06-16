@@ -9,11 +9,13 @@ function Cell({ x, y, bomb, bombsadj, isopened }) {
   const { open, setOpen } = context.OpenContext;
   const [bombIcon, setBombIcon] = useState("💣");
 
-  useEffect(() => {
-    if (open.x === x && open.y === y && bomb) {
-      setBombIcon("💥");
-    }
-  }, [open]);
+
+  // Inutile car open n'est plus une paire xy mais un tableau de paires xy => a modifier
+  // useEffect(() => {
+  //   if (open.x === x && open.y === y && bomb) {
+  //     setBombIcon("💥");
+  //   }
+  // }, [open]);
 
   return (
     <>
@@ -34,7 +36,6 @@ function Cell({ x, y, bomb, bombsadj, isopened }) {
                 y: y,
                 bomb: bomb,
                 bombsadj: bombsadj,
-                isopened: isopened,
               },
             ])
           }>

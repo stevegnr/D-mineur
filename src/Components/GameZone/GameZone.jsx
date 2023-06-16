@@ -16,16 +16,19 @@ function GameZone({ height, width }) {
   let emptyCells = [];
   let bombsadj = 0;
 
+  const [opened, setOpened] = useState([]);
+  const [emptyCellsState, setEmptyCellsState] = useState([]);
+
   function adjCells(x, y) {
     return [
-      { x: x - 1, y: y }, // Gauche
-      { x: x + 1, y: y }, // Droite
+      { x: x - 1, y: y - 1 }, // Haut gauche
       { x: x, y: y - 1 }, // Haut
-      { x: x, y: y + 1 }, // Bas
-      { x: x - 1, y: y - 1 }, // Bas droite
-      { x: x - 1, y: y + 1 }, // Haut gauche
       { x: x + 1, y: y - 1 }, // Haut droite
+      { x: x + 1, y: y }, // Droite
       { x: x + 1, y: y + 1 }, // Bas droite
+      { x: x, y: y + 1 }, // Bas
+      { x: x - 1, y: y + 1 }, // Bas gauche
+      { x: x - 1, y: y }, // Gauche
     ];
   }
 
@@ -97,21 +100,27 @@ function GameZone({ height, width }) {
         generatedCells[index] = cellWithAdjBombs;
       });
       setGameLaunch(!gameLaunch);
+      setEmptyCellsState(emptyCells);
       setCells(generatedCells);
     }
   }, [gameLaunch]);
 
+  //  HandleOpenCell
   function handleOpenCell(x, y, bomb, bombsadj) {
     let openingCells = [];
 
     if (bomb) {
       // Ouvre toutes les cases si le joueur tombe sur une bombe
       openingCells.push(...cells);
+      setCells((prevCells) => {
+        return prevCells.map((cell) => {
+          return cloneElement(cell, { isopened: true });
+        });
+      });
     } else if (bombsadj === 0) {
       // Ouvre toutes les cellules vides adjacentes à une cellule vide ouverte
-      // fonction récursive sur adjcell
-
       openingAdjCells(x, y, openingCells);
+      // openingCells.push(...openingAdjCells(x, y, openingCells));
     }
 
     // Dans tous les cas, ouvrir la case sélectionnée
@@ -127,37 +136,64 @@ function GameZone({ height, width }) {
         return cell;
       });
     });
+    if (!opened.some((cell) => cell.x === x && cell.y === y)) {
+      setOpened([...opened, { x, y }]);
+    }
   }
 
   function openingAdjCells(x, y, cellTab) {
+    // Ouvrir les cellules adjacentes
     adjCells(x, y).forEach((element) => {
-      if (!cellTab.includes({ x, y })) {
-        cellTab.push(element);
-      }
-      if (element.bombsadj === 0) {
-        openingAdjCells(element.x, element.y, cellTab);
+      if (
+        !cellTab.some(
+          (cell) => cell.xelement === element.x && cell.yelement === element.y
+        )
+      ) {
+        cellTab.push({ x: element.x, y: element.y });
+
+        // Récursivité si les cellules ouvertes sont elles aussi vides (bombsadj = 0)
+
+        if (
+          emptyCellsState.some(
+            (cell) => cell.xelement === element.x && cell.yelement === element.y
+          )
+        ) {
+          if (
+            !cellTab.some(
+              (cell) =>
+                cell.xelement === element.x && cell.yelement === element.y
+            )
+          ) {
+            // console.log({ x: x, y: y });
+            cellTab.push({ x: element.x, y: element.y });
+            openingAdjCells(element.x, element.y, cellTab);
+          }
+        }
       }
     });
+    console.log({ cellTab: cellTab });
+    // return cellTab;
   }
 
   useEffect(() => {
-    console.log({ open: open });
     async function openCells() {
       open.forEach((element) => {
-        if (
-          open.some(
-            (cell) =>
-              cell.x === element.x &&
-              cell.y === element.y &&
-              element.isopened === false
-          )
-        ) {
+        if (open.some((cell) => cell.x === element.x && cell.y === element.y)) {
           handleOpenCell(element.x, element.y, element.bomb, element.bombsadj);
         }
       });
     }
 
     openCells();
+    if (open.length > 0) {
+      setOpen((prevToOpen) =>
+        prevToOpen.filter((element) => {
+          return !opened.some(
+            (cell) => cell.x === element.x && cell.y === element.y
+          );
+        })
+      );
+    }
   }, [open]);
 
   return (
