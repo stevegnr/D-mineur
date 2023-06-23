@@ -17,7 +17,6 @@ function GameZone({ height, width }) {
   let bombsadj = 0;
 
   const [opened, setOpened] = useState([]);
-  const [emptyCellsState, setEmptyCellsState] = useState([]);
 
   function adjCells(x, y) {
     return [
@@ -100,7 +99,6 @@ function GameZone({ height, width }) {
         generatedCells[index] = cellWithAdjBombs;
       });
       setGameLaunch(!gameLaunch);
-      setEmptyCellsState(emptyCells);
       setCells(generatedCells);
     }
   }, [gameLaunch]);
@@ -150,29 +148,9 @@ function GameZone({ height, width }) {
         )
       ) {
         cellTab.push({ x: element.x, y: element.y });
-
-        // Récursivité si les cellules ouvertes sont elles aussi vides (bombsadj = 0)
-
-        if (
-          emptyCellsState.some(
-            (cell) => cell.xelement === element.x && cell.yelement === element.y
-          )
-        ) {
-          if (
-            !cellTab.some(
-              (cell) =>
-                cell.xelement === element.x && cell.yelement === element.y
-            )
-          ) {
-            // console.log({ x: x, y: y });
-            cellTab.push({ x: element.x, y: element.y });
-            openingAdjCells(element.x, element.y, cellTab);
-          }
-        }
       }
     });
-    console.log({ cellTab: cellTab });
-    // return cellTab;
+    return cellTab;
   }
 
   useEffect(() => {
