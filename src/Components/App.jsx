@@ -28,11 +28,13 @@ function App() {
       }}>
       <Wrapper>
         <Header />
-        <GameZone
-          width={width}
-          height={height}
-        />
-        <SideMenu />
+        <GameSideMenu>
+          <GameZone
+            width={width}
+            height={height}
+          />
+          <SideMenu />
+        </GameSideMenu>
         <Menu />
       </Wrapper>
     </DmineurContext.Provider>
@@ -47,4 +49,8 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   gap: 30px;
+`;
+
+const GameSideMenu = styled.div`
+  position: relative;
 `;
