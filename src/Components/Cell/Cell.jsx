@@ -6,10 +6,11 @@ import styled from "styled-components";
 
 function Cell({ x, y, bomb, bombsadj, isopened }) {
   const context = useContext(DmineurContext);
+  const { gameLaunch } = context.GameLaunchContext;
   const { open, setOpen } = context.OpenContext;
   const [bombIcon, setBombIcon] = useState("💣");
   const { bombTriggered } = context.BombTriggeredContext;
-
+  const [isFlagged, setIsFlagged] = useState(false);
 
   useEffect(() => {
     if (bombTriggered.x === x && bombTriggered.y === y && bomb) {
@@ -17,9 +18,32 @@ function Cell({ x, y, bomb, bombsadj, isopened }) {
     }
   }, [open]);
 
+  useEffect(() => {
+    setIsFlagged(false);
+  }, [gameLaunch]);
+
+  function handleClick() {
+    if (!isFlagged) {
+      setOpen([
+        ...open,
+        {
+          x: x,
+          y: y,
+          bomb: bomb,
+          bombsadj: bombsadj,
+        },
+      ]);
+    }
+  }
+
+  function handleRightClick(e) {
+    e.preventDefault();
+    setIsFlagged(!isFlagged);
+  }
+
   return (
     <>
-      {isopened ? (
+      {isopened && !isFlagged ? (
         <CellComponent
           bombsadj={bombsadj}
           isopened={isopened}>
@@ -28,18 +52,9 @@ function Cell({ x, y, bomb, bombsadj, isopened }) {
       ) : (
         <CellComponent
           isopened={isopened}
-          onClick={() =>
-            setOpen([
-              ...open,
-              {
-                x: x,
-                y: y,
-                bomb: bomb,
-                bombsadj: bombsadj,
-              },
-            ])
-          }>
-          {isopened ? (bomb ? bombIcon : bombsadj) : ""}
+          onClick={() => handleClick()}
+          onContextMenu={handleRightClick}>
+          {isFlagged && "🚩"}
         </CellComponent>
       )}
     </>
@@ -51,7 +66,8 @@ export default Cell;
 const CellComponent = styled.div`
   height: 30px;
   width: 30px;
-  background-color: ${(props) => (props.isopened ? "#e3dede" : "#bab3b3")};
+  background-color: ${(props) =>
+    props.isopened && !props.isFlagged ? "#e3dede" : "#bab3b3"};
   border: 1px solid black;
   border-radius: 5px;
   display: flex;
