@@ -8,14 +8,14 @@ function Cell({ x, y, bomb, bombsadj, isopened }) {
   const context = useContext(DmineurContext);
   const { open, setOpen } = context.OpenContext;
   const [bombIcon, setBombIcon] = useState("💣");
+  const { bombTriggered } = context.BombTriggeredContext;
 
 
-  // Inutile car open n'est plus une paire xy mais un tableau de paires xy => a modifier
-  // useEffect(() => {
-  //   if (open.x === x && open.y === y && bomb) {
-  //     setBombIcon("💥");
-  //   }
-  // }, [open]);
+  useEffect(() => {
+    if (bombTriggered.x === x && bombTriggered.y === y && bomb) {
+      setBombIcon("💥");
+    }
+  }, [open]);
 
   return (
     <>

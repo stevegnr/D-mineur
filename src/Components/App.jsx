@@ -11,6 +11,7 @@ function App() {
   const [bombs, setBombs] = useState(10);
   const [gameLaunch, setGameLaunch] = useState(false);
   const [open, setOpen] = useState([]);
+  const [bombTriggered, setBombTriggered] = useState([]);
 
   return (
     <DmineurContext.Provider
@@ -20,6 +21,7 @@ function App() {
         BombsContext: { bombs, setBombs },
         GameLaunchContext: { gameLaunch, setGameLaunch },
         OpenContext: { open, setOpen },
+        BombTriggeredContext: { bombTriggered, setBombTriggered },
       }}>
       <Wrapper>
         <Header />

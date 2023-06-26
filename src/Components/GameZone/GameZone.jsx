@@ -11,6 +11,7 @@ function GameZone({ height, width }) {
   const { bombs } = context.BombsContext;
   const { gameLaunch, setGameLaunch } = context.GameLaunchContext;
   const { open, setOpen } = context.OpenContext; // Les cellules ajoutées dans ce tableau seront ouvertes
+  const { setBombTriggered } = context.BombTriggeredContext;
 
   const [cells, setCells] = useState([]);
   let emptyCells = [];
@@ -116,10 +117,11 @@ function GameZone({ height, width }) {
           return cloneElement(cell, { isopened: true });
         });
       });
+      setBombTriggered({ x, y });
     } else if (bombsadj === 0) {
       // Ouvre toutes les cellules vides adjacentes à une cellule vide ouverte
       openingAdjCells(x, y, openingCells);
-      // openingCells.push(...openingAdjCells(x, y, openingCells));
+    
     }
 
     // Dans tous les cas, ouvrir la case sélectionnée
