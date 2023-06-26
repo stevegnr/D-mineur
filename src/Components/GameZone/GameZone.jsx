@@ -121,7 +121,6 @@ function GameZone({ height, width }) {
     } else if (bombsadj === 0) {
       // Ouvre toutes les cellules vides adjacentes à une cellule vide ouverte
       openingAdjCells(x, y, openingCells);
-    
     }
 
     // Dans tous les cas, ouvrir la case sélectionnée
@@ -153,7 +152,7 @@ function GameZone({ height, width }) {
         cellTab.push({ x: element.x, y: element.y });
       }
     });
-    return cellTab;
+    setOpen([...open, ...cellTab]);
   }
 
   useEffect(() => {

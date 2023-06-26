@@ -11,6 +11,7 @@ function Cell({ x, y, bomb, bombsadj, isopened }) {
   const [bombIcon, setBombIcon] = useState("💣");
   const { bombTriggered } = context.BombTriggeredContext;
   const [isFlagged, setIsFlagged] = useState(false);
+  const { flags, setFlags } = context.FlagsContext;
 
   useEffect(() => {
     if (bombTriggered.x === x && bombTriggered.y === y && bomb) {
@@ -40,6 +41,14 @@ function Cell({ x, y, bomb, bombsadj, isopened }) {
     e.preventDefault();
     setIsFlagged(!isFlagged);
   }
+
+  useEffect(() => {
+    if (isFlagged) {
+      setFlags(flags + 1);
+    } else {
+      setFlags(flags - 1);
+    }
+  }, [isFlagged]);
 
   return (
     <>

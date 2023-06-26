@@ -4,6 +4,7 @@ import { DmineurContext } from "../Context/Context";
 import GameZone from "./GameZone/GameZone";
 import Header from "./Header/Header";
 import Menu from "./Menu/Menu";
+import SideMenu from "./SideMenu/SideMenu";
 
 function App() {
   const [width, setWidth] = useState(10);
@@ -12,6 +13,7 @@ function App() {
   const [gameLaunch, setGameLaunch] = useState(false);
   const [open, setOpen] = useState([]);
   const [bombTriggered, setBombTriggered] = useState([]);
+  const [flags, setFlags] = useState(0);
 
   return (
     <DmineurContext.Provider
@@ -22,6 +24,7 @@ function App() {
         GameLaunchContext: { gameLaunch, setGameLaunch },
         OpenContext: { open, setOpen },
         BombTriggeredContext: { bombTriggered, setBombTriggered },
+        FlagsContext: { flags, setFlags },
       }}>
       <Wrapper>
         <Header />
@@ -29,6 +32,7 @@ function App() {
           width={width}
           height={height}
         />
+        <SideMenu />
         <Menu />
       </Wrapper>
     </DmineurContext.Provider>
