@@ -33,6 +33,7 @@ function GameZone({ height, width }) {
 
   useEffect(() => {
     setOpen([]);
+    setOpened([]);
     // Création et remplissage de la grille
     if (gameLaunch) {
       const qtyCells = width * height;
