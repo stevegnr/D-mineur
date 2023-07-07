@@ -18,7 +18,7 @@ function Menu() {
         name="width"
         id="width"
         min={5}
-        max={200}
+        max={50}
         placeholder="Cases en largeur"
         onChange={(e) => setWidth(e.target.value)}
         defaultValue={width}
@@ -29,7 +29,7 @@ function Menu() {
         name="height"
         id="height"
         min={5}
-        max={200}
+        max={50}
         placeholder="Cases en hauteur"
         onChange={(e) => setHeight(e.target.value)}
         defaultValue={height}

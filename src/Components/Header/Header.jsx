@@ -1,9 +1,12 @@
+import { useContext } from 'react';
+import { DmineurContext } from "../../Context/Context";
 import { styled } from 'styled-components';
 
 function Header() {
-  return (
-    <Banner>💣Démineur</Banner>
-  )
+  const context = useContext(DmineurContext);
+  const { endGame } = context.EndGameContext;
+
+  return <Banner>{endGame === "" ? "💣Démineur" : endGame}</Banner>;
 }
 
 export default Header

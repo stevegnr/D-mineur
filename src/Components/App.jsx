@@ -14,6 +14,7 @@ function App() {
   const [open, setOpen] = useState([]);
   const [bombTriggered, setBombTriggered] = useState([]);
   const [flags, setFlags] = useState(0);
+  const [endGame, setEndGame] = useState("");
 
   return (
     <DmineurContext.Provider
@@ -25,6 +26,7 @@ function App() {
         OpenContext: { open, setOpen },
         BombTriggeredContext: { bombTriggered, setBombTriggered },
         FlagsContext: { flags, setFlags },
+        EndGameContext: { endGame, setEndGame },
       }}>
       <Wrapper>
         <Header />

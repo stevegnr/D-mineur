@@ -12,12 +12,17 @@ function GameZone({ height, width }) {
   const { gameLaunch, setGameLaunch } = context.GameLaunchContext;
   const { open, setOpen } = context.OpenContext; // Les cellules ajoutées dans ce tableau seront ouvertes
   const { setBombTriggered } = context.BombTriggeredContext;
+  const { setFlags } = context.FlagsContext;
+  const { setEndGame } = context.EndGameContext;
+
 
   const [cells, setCells] = useState([]);
   let emptyCells = [];
   let bombsadj = 0;
+  let qtyCells = 0;
 
   const [opened, setOpened] = useState([]);
+  const [filteredOpened, setFilteredOpened] = useState([]);
 
   function adjCells(x, y) {
     return [
@@ -35,9 +40,11 @@ function GameZone({ height, width }) {
   useEffect(() => {
     setOpen([]);
     setOpened([]);
+    setFlags(0);
+    setEndGame('')
     // Création et remplissage de la grille
     if (gameLaunch) {
-      const qtyCells = width * height;
+      qtyCells = width * height;
       let generatedCells = [];
       let min = 1;
       let max = qtyCells;
@@ -118,6 +125,7 @@ function GameZone({ height, width }) {
         });
       });
       setBombTriggered({ x, y });
+      setEndGame('💥Défaite ! 😭')
     } else if (bombsadj === 0) {
       // Ouvre toutes les cellules vides adjacentes à une cellule vide ouverte
       openingAdjCells(x, y, openingCells);
@@ -139,8 +147,14 @@ function GameZone({ height, width }) {
     if (!opened.some((cell) => cell.x === x && cell.y === y)) {
       setOpened([...opened, { x, y }]);
     }
+    setFilteredOpened(
+      opened.filter(
+        (element) =>
+          element.x >= 1 && element.x <= 10 && element.y >= 1 && element.y <= 10
+      )
+    );
   }
-
+  let test = [];
   function openingAdjCells(x, y, cellTab) {
     // Ouvrir les cellules adjacentes
     adjCells(x, y).forEach((element) => {
@@ -150,6 +164,19 @@ function GameZone({ height, width }) {
         )
       ) {
         cellTab.push({ x: element.x, y: element.y });
+      }
+
+      let cellA = cells.find(
+        (cell) => cell.props.x === element.x && cell.props.y === element.y
+      );
+      if (
+        cellA &&
+        cellA.props.bomb === false &&
+        cellA.props.bombsadj === 0 &&
+        !test.includes(cellA.key)
+      ) {
+        test = [...test, cellA.key];
+        openingAdjCells(cellA.props.x, cellA.props.y, cellTab);
       }
     });
     setOpen([...open, ...cellTab]);
@@ -174,6 +201,14 @@ function GameZone({ height, width }) {
         })
       );
     }
+
+    if (width * height - filteredOpened.length === bombs) {
+            setEndGame("🎉Victoire ! 😍");
+
+    }
+      console.log({ opened: opened.length, filtered: filteredOpened.length });
+    console.log(width * height - filteredOpened.length === bombs);
+    console.log(filteredOpened.sort((a, b) => a.x - b.x));
   }, [open]);
 
   return (
